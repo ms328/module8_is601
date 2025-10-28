@@ -31,7 +31,18 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install -r requirements.txt
+          # Ensure system libraries required by Playwright are present on the runner.
+          # On `ubuntu-latest` this will install the most common packages browsers need.
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libnss3 libnspr4 libasound2 libatk1.0-0 libcups2 libxss1 libxrandr2 \
+            libx11-xcb1 libgtk-3-0 libgbm1 libpangocairo-1.0-0 libxcomposite1 \
+            libxcursor1 libxdamage1 libxfixes3 || true
+
+          # Playwright helper to install any additional OS deps (no-op if already satisfied)
           sudo playwright install-deps || true
+
+          # Install browsers used by Playwright
           playwright install
 
       - name: Run tests
