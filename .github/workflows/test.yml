@@ -31,6 +31,7 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install -r requirements.txt
+          sudo playwright install-deps || true
           playwright install
 
       - name: Run tests
@@ -50,13 +51,15 @@ jobs:
       - name: Build image
         run: docker build -t app:test .
 
+      - name: Show built images
+        run: docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.Size}}'
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v1
         with:
           image-ref: 'app:test'
           format: 'table'
-          ignorefile: .trivyignore      # ✅ skip known CVEs
-          exit-code: '0'                # ✅ don’t fail the build
+          ignorefile: .trivyignore
+          exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
