@@ -29,7 +29,7 @@ If you see a version number, you're good to go.
 
 ## Install Git
 
-- **MacOS (using Homebrew)**
+- *MacOS (using Homebrew)*
 
 ```bash
 brew install git
